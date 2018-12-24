@@ -49,16 +49,18 @@ public class Particle {
 		
 		distance = Math.sqrt(Math.pow((posX - nearbyParticles.get(0).getPosX()), 2) + Math.pow((posY - nearbyParticles.get(0).getPosY()), 2)); //distance to sun	
 		
-		//accelX = (-1 * G * CelestialValues.SUN_MASS * posX) / Math.pow(distance+0.00000000001, 2); //acceleration from sun
-		//accelY = (-1 * G * CelestialValues.SUN_MASS * posY) / Math.pow(distance+0.00000000001, 2); //acceleration from sun
+		//accelX = (-1 * G * CelestialValues.SUN_MASS * posX) / Math.pow(distance, 3); //acceleration from sun
+		//accelY = (-1 * G * CelestialValues.SUN_MASS * posY) / Math.pow(distance, 3); //acceleration from sun
+		accelX = 0;
+		accelY = 0;
 		
 		for(int i = 0; i < nearbyParticles.size(); i++) { // Acceleration from other Particles
 			if(nearbyParticles.get(i).getId() != id) {
 				tempD = Math.sqrt(Math.pow((posX - nearbyParticles.get(i).getPosX()), 2) + Math.pow((posY - nearbyParticles.get(i).getPosY()), 2));
-				tempATotal = (-1 * G * nearbyParticles.get(i).getMass()) / Math.pow(tempD, 2);
-				tempTheta = getAngle(nearbyParticles.get(0), nearbyParticles.get(i));
-				accelX += tempATotal * Math.cos(tempTheta);
-				accelY += tempATotal * Math.sin(tempTheta);
+				//tempATotal = (-1 * G * nearbyParticles.get(i).getMass()) / Math.pow(tempD, 2);
+				//tempTheta = getAngle(nearbyParticles.get(0), nearbyParticles.get(i));
+				accelX += (-1 * G * nearbyParticles.get(i).getMass() * (posX - nearbyParticles.get(i).getPosX())) / Math.pow(tempD, 3);
+				accelY += (-1 * G * nearbyParticles.get(i).getMass() * (posY - nearbyParticles.get(i).getPosY())) / Math.pow(tempD, 3);
 			}
 
 		}
@@ -72,7 +74,7 @@ public class Particle {
 		velX += accelX * deltaTime;
 		velY += accelY * deltaTime;
 		posX += velX * deltaTime;
-		posY +=velY * deltaTime;
+		posY += velY * deltaTime;
 		
 		time = time + deltaTime;
 		System.out.println("Particle: " + id + "; Time: " + time + "; Distance From Sun: " + distance + "; X Position: " + posX + "; Y Position: " + posY + "; Velocity in the X direction: " + velX + "; Velocity in the Y direction: " + velY + "; Acceleration in the X direction: " + accelX + "; Acceleration in the Y direction: " + accelY);
@@ -87,6 +89,15 @@ public class Particle {
 		prevY = posY;
 	
 		
+	}
+	
+	private double getAngle(Particle center, Particle point) {
+		double dist = Math.sqrt(Math.pow((point.getPosX() - center.getPosX()), 2) + Math.pow((point.getPosY() - center.getPosY()), 2));
+		//System.out.println("ffdfdfd" + "     " + ((point.getPosX() - center.getPosX()) / dist));
+		System.out.println(center.getPosY());
+		return Math.acos((point.getPosX() - center.getPosX()) / dist);
+		
+		//return Math.atan((point.getPosY() - center.getPosY()) / (point.getPosX() - center.getPosX()));
 	}
 	
 	public double getPosX() {
@@ -128,11 +139,6 @@ public class Particle {
 	
 	public void setYSpeed(double s) {
 		velY = s;
-	}
-	
-	private double getAngle(Particle center, Particle point) {
-		double dist = Math.sqrt(Math.pow((point.getPosX() - center.getPosX()), 2) + Math.pow((point.getPosY() - center.getPosY()), 2));
-		return Math.acos(dist * (point.getPosX() - center.getPosX()));
 	}
 	
 }
