@@ -133,9 +133,7 @@ public class OrbitPlot extends Plot {
 				}
 				
 			});
-			
-			//OTHER STUFF
-			
+						
 			frame.setPreferredSize(new Dimension(500, 100));
 			frame.setSize(500, 100);
 			frame.setVisible(true);
