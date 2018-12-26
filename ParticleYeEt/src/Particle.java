@@ -7,17 +7,23 @@ public class Particle {
 
 	
 	final double G = 39.660;
-	double posX, posY, velX, velY, accelX, accelY, deltaTime, time, particleMass, distance, ymid, vymid, aymid, xmid, vxmid, axmid;
+	static double time;
+	double tempD, tempX, tempY, tempTheta, tempATotal;
+	double posX, posY, velX, velY, accelX, accelY, deltaTime, particleMass, distance, ymid, vymid, aymid, xmid, vxmid, axmid;
 	double prevX, prevY;
 	int id;
+	String name;
+	Color color;
 	OrbitPlot systemPlot;
 	//double x, y, vx, vy, ax, ay, G, dt, t, particleMass, distance, orbitalVelocity, CelestialValues.SUN_MASS, forceOfG, ymid, vymid, aymid, xmid, vxmid, axmid;
 	//particleMass = 0.000003003;
 	//CelestialValues.SUN_MASS = 1;
 
 
-	public Particle(int ID, double mass, double x, double y, double speedX, double speedY, OrbitPlot plot) {
+	public Particle(int ID, double mass, double x, double y, double speedX, double speedY, Color c, String n, OrbitPlot plot) {
 		id = ID;
+		name = n;
+		color = c;
 		deltaTime = 0.001;
 		time = 0;
 		particleMass = mass;
@@ -44,8 +50,7 @@ public class Particle {
 		}
 	}
 	
-	public void stepOrbit(ArrayList<Particle> nearbyParticles) {
-		double tempD, tempX, tempY, tempTheta, tempATotal;
+	public void yeet(ArrayList<Particle> nearbyParticles) {
 		
 		distance = Math.sqrt(Math.pow((posX - nearbyParticles.get(0).getPosX()), 2) + Math.pow((posY - nearbyParticles.get(0).getPosY()), 2)); //distance to sun	
 		
@@ -59,8 +64,8 @@ public class Particle {
 				tempD = Math.sqrt(Math.pow((posX - nearbyParticles.get(i).getPosX()), 2) + Math.pow((posY - nearbyParticles.get(i).getPosY()), 2));
 				//tempATotal = (-1 * G * nearbyParticles.get(i).getMass()) / Math.pow(tempD, 2);
 				//tempTheta = getAngle(nearbyParticles.get(0), nearbyParticles.get(i));
-				accelX += (-1 * G * nearbyParticles.get(i).getMass() * (posX - nearbyParticles.get(i).getPosX())) / Math.pow(tempD, 3);
-				accelY += (-1 * G * nearbyParticles.get(i).getMass() * (posY - nearbyParticles.get(i).getPosY())) / Math.pow(tempD, 3);
+				accelX += (-1 * CelestialValues.NATURAL_G * nearbyParticles.get(i).getMass() * (posX - nearbyParticles.get(i).getPosX())) / Math.pow(tempD, 3); // a = -(G*M*x)/(r^3); This is correct, including the multiplication by x-displacement and the r-to-the-third-power. Check notebook or read Feynman Lectures V1 Ch9.7
+				accelY += (-1 * CelestialValues.NATURAL_G * nearbyParticles.get(i).getMass() * (posY - nearbyParticles.get(i).getPosY())) / Math.pow(tempD, 3);
 			}
 
 		}
@@ -78,12 +83,21 @@ public class Particle {
 		
 		time = time + deltaTime;
 		System.out.println("Particle: " + id + "; Time: " + time + "; Distance From Sun: " + distance + "; X Position: " + posX + "; Y Position: " + posY + "; Velocity in the X direction: " + velX + "; Velocity in the Y direction: " + velY + "; Acceleration in the X direction: " + accelX + "; Acceleration in the Y direction: " + accelY);
+	
 		
-		systemPlot.setColor(Color.RED);
-		systemPlot.addPoint(prevX, prevY);
-		
-		systemPlot.setColor(Color.BLUE);
-		systemPlot.addPoint(posX,posY);
+		if(id != 0) { //If the particle is not the sun
+			systemPlot.setColor(color);
+			systemPlot.addPoint(prevX, prevY);
+			systemPlot.setColor(Color.GREEN);
+			systemPlot.addPoint(posX,posY);
+		}
+		else {
+			systemPlot.setPointSize(10);
+			systemPlot.setColor(color);
+			systemPlot.addPoint(posX, posY);
+			systemPlot.setPointSize(3);
+			
+		}
 		
 		prevX = posX;
 		prevY = posY;
