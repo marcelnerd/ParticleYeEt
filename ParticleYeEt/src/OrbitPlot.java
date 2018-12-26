@@ -130,6 +130,10 @@ public class OrbitPlot extends Plot {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					particleArray.add(new Particle(particleArray.size(), CelestialValues.EARTH_MASS, Double.parseDouble(partX.getText()), Double.parseDouble(partY.getText()), Double.parseDouble(partSpeed.getText()), 0, getColorById(particleArray.size()), null, OrbitPlot.this));
+					partMass.setText("");
+					partX.setText("");
+					partY.setText("");
+					partSpeed.setText("");
 				}
 				
 			});
